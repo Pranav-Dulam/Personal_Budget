@@ -1,34 +1,26 @@
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const app = express();
 const port = 3000;
 
 app.use('/', express.static('public'));
 
-const budget = {
-    myBudget:[
-    {
-        title: 'Eat out',
-        budget: 25
-    },
-    {
-        title: 'Rent',
-        budget: 375
-    },
-    {
-        title: 'Grocery',
-        budget: 110
-    },
-    ]
-};
-
 app.get('/budget', (req, res) => {
-    res.json(budget);
+    const budgetPath = path.join(__dirname, 'budget.json');
+    fs.readFile(budgetPath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading budget.json:', err);
+            return res.status(500).json({ error: 'Failed to read budget data' });
+        }
+        try{
+            const parsed = JSON.parse(data);
+            res.json(parsed);
+        } catch (parseErr) {
+            console.error('Error parsing budget.json:', parseErr);
+            res.status(500).json({ error: 'Invalid JSON format' });
+        }
+    });
 });
 
-app.get('/hello', (req, res) => {
-    res.send('Hello World');
-});
-
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-})
+app.listen(port, () => console.log(`http://localhost:${port}`));
