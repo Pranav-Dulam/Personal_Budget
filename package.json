@@ -4,10 +4,19 @@
   "description": "The path to NGInx main folder: /usr/share/nginx/html",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pranav-Dulam/Personal_Budget.git"
+  },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pranav-Dulam/Personal_Budget/issues"
+  },
+  "homepage": "https://github.com/Pranav-Dulam/Personal_Budget#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
