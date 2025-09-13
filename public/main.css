@@ -96,3 +96,27 @@ div.hero h2 {
         margin: 10px;
     }
 }
+
+.charts {
+    display: flex;
+    justify-content: center; /* centers them horizontally */
+    align-items: center;     /* vertically aligns */
+    gap: 40px;               /* space between charts */
+  }
+  
+  #myChart, #d3Chart {
+    max-width: 400px;
+    max-height: 400px;
+  }
+
+  .side-by-side {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;   /* add more breathing room */
+}
+
+.side-by-side .text-box {
+    flex: 1;
+    max-width: 50%; /* keeps them balanced */
+}

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/reset.css">
     <link rel="stylesheet" href="/main.css">
 </head>
-<body>
+<scri>
 
     <div class="menu">
         <ul>
@@ -26,71 +26,41 @@
     <div class="container center">
 
         <div class="page-area">
-
+        <div class="row side-by-side">
             <div class="text-box">
-                <h1>Stay on track</h1>
+                <h1>Stay on Track</h1>
                 <p>
                     Do you know where you are spending your money? If you really stop to track it down,
                     you would get surprised! Proper budget management depends on real data... and this
                     app will help you with that!
                 </p>
             </div>
-    
             <div class="text-box">
                 <h1>Alerts</h1>
                 <p>
                     What if your clothing budget ended? You will get an alert. The goal is to never go over the budget.
                 </p>
             </div>
-    
-            <div class="text-box">
-                <h1>Results</h1>
-                <p>
-                    People who stick to a financial plan, budgeting every expense, get out of debt faster!
-                    Also, they to live happier lives... since they expend without guilt or fear... 
-                    because they know it is all good and accounted for.
-                </p>
-            </div>
-    
-            <div class="text-box">
-                <h1>Free</h1>
-                <p>
-                    This app is free!!! And you are the only one holding your data!
-                </p>
-            </div>
-    
-            <div class="text-box">
-                <h1>Stay on track</h1>
-                <p>
-                    Do you know where you are spending your money? If you really stop to track it down,
-                    you would get surprised! Proper budget management depends on real data... and this
-                    app will help you with that!
-                </p>
-            </div>
-    
-            <div class="text-box">
-                <h1>Alerts</h1>
-                <p>
-                    What if your clothing budget ended? You will get an alert. The goal is to never go over the budget.
-                </p>
-            </div>
-    
-            <div class="text-box">
-                <h1>Results</h1>
-                <p>
-                    People who stick to a financial plan, budgeting every expense, get out of debt faster!
-                    Also, they to live happier lives... since they expend without guilt or fear... 
-                    because they know it is all good and accounted for.
-                </p>
-            </div>
-    
-            <div class="text-box">
-                <h1>Free</h1>
-                    <canvas id="myChart" width="400" height="400"></canvas>
-            </div>
-
         </div>
-
+    
+               <div class="row side-by-side">
+                <div class="text-box">
+                    <h1>Results</h1>
+                    <p>
+                        See below a sample of the budget data. This is a doughnut chart created with Chart.js.
+                    </p>
+                    <div class="charts">
+                        <canvas id="myChart" width="250" height="250"></canvas> 
+                    </div>
+                </div>
+                <div class="text-box">
+                    <h1>Free</h1>
+                    <p>
+                        This app is free. Use it as you wish. If you like it, share with your friends.
+                    </p>
+                    <div class="charts" id="d3Chart"></div>
+                </div>
+        </div>
     </div>
 
     <div class="bottom">
@@ -101,20 +71,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js" integrity="sha512-G8JE1Xbr0egZE5gNGyUm1fF764iHVfRXshIoUWCTPAbKkkItp/6qal5YAHXrxEu4HNfPTQs6HOu3D5vCGS1j3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        function getBudget() {
-            axios.get('/budget', { headers: {'Accept': 'application/json'}})
-            .then(function(res) {
-                console.log('Budget data loaded from JSON:', res.data);
-                const labels = [];
-                const data = [];
-                res.data.myBudget.forEach(item => {
-                    labels.push(item.title);
-                    data.push(item.budget);
-                });
-
-
-                function generateColors(num) {
+   <script>
+        function generateColors(num) {
                     const baseColors = [
                         '#ffcd56',
                         '#ff6384',
@@ -135,7 +93,18 @@
                     }
                     return colors;
                 }
-
+   </script>
+   <script>
+        function getBudget() {
+            axios.get('/budget', { headers: {'Accept': 'application/json'}})
+            .then(function(res) {
+                console.log('Budget data loaded from JSON:', res.data);
+                const labels = [];
+                const data = [];
+                res.data.myBudget.forEach(item => {
+                    labels.push(item.title);
+                    data.push(1);
+                });
                 const ctx = document.getElementById("myChart").getContext("2d");
                 new Chart(ctx, {
                     type: 'doughnut',
@@ -161,7 +130,75 @@
             .catch(error => console.error('Error fetching budget data:', error));
         }
     // Fetch and render chart
-    getBudget();
+    </script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script>
+        function renderD3Chart(budgetItems) {
+            var width = 300,
+                height = 300,
+                radius = Math.min(width, height) / 2;
+            var color = d3.scale.category20();
+            var svg = d3.select("#d3Chart").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+            var arc = d3.svg.arc().outerRadius(radius - 10).innerRadius(0);
+            var pie = d3.layout.pie().sort(null).value(function(d){ return d.budget;});
+            var g = svg.selectAll(".arc")
+                .data(pie(budgetItems))
+                .enter().append("g")
+                .attr("class", "arc");
+
+            g.append("path")
+                .attr("d", arc)
+                .style("fill", function(d) { return color(d.data.title); });
+
+            g.append("text")
+                .attr("transform", function(d) {return "translate(" + arc.centroid(d) + ")"; })
+                .attr("dy", ".35em")
+                .text(function(d) { return d.data.title; });
+        }
+
+        // Hook into existing getBudget to render D3 chart once data is loaded
+        const originalGetBudget = getBudget;
+        getBudget = function() {
+            axios.get('/budget', { headers: 
+                {'Accept': 'application/json'}})
+                .then(function(res) {
+                    console.log('Budget data loaded from JSON:', res.data);
+                    const labels = [];
+                    const data = [];
+                    res.data.myBudget.forEach(item => {
+                        labels.push(item.title);
+                        data.push(item.budget);
+                    });
+                    // Render Chart.js as before
+                    const ctx = document.getElementById("myChart").getContext("2d");
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Budget',
+                                data: data,
+                                backgroundColor: generateColors(labels.length)
+                            }]
+                        },
+                        options: { responsive: true,
+                            legend: { position: 'bottom' },
+                            tooltips: { enabled: true }
+                        }
+                    });
+                    // Render D3 chart
+                    renderD3Chart(res.data.myBudget);
+                })
+                .catch(error => console.error('Error fetching budget data:', error));
+        }
+    </script>
+    <script>
+        // Initial call to fetch budget data and render charts
+        getBudget();
     </script>
 </body>
 </html>
